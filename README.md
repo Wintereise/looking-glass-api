@@ -2,7 +2,13 @@
 
 This is the server counterpart to my [lg-web](http://github.com/Wintereise/lg-web) frontend. It performs server-side commands, and returns the responses back to the authenticated caller as JSON payloads.
 
+#### Depends on
+
+1. php5-sqlite
+2. **php5-phalcon**
+
 #### Methods available
+
 *via HTTP GET* -> /v1/api/{task}/{target}[/]?{mask}
 
 *mask* is optional, and only useful for OpenBGPd BGP table lookups. *task* may be any of the following,
@@ -18,6 +24,16 @@ The default API key (HTTP basic Auth - **username only**) is `odske710r3KyS8e32X
 *via HTTP PUT* -> /v1/api/update-key/{key}
 
 Here, *key* is the new API key for the instance. It's recommended to update the key immediately after install. Note that it has to be exactly **64 characters long**.
+
+This is doable like this, or via the API -- whichever you prefer.
+
+`root@lax /var/www/lg-api # sqlite3 db/db.sqlite
+SQLite version 3.7.13 2012-06-11 02:05:22
+Enter ".help" for instructions
+Enter SQL statements terminated with a ";"
+sqlite> UPDATE `api` SET `key` = 'NEW_KEY_64_CHARS_GOES_HERE';
+sqlite> .exit
+`
 
 A typical response looks like this,
 

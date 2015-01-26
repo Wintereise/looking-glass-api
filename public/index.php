@@ -13,7 +13,7 @@ $config = array(
     "dbname" => "../db/db.sqlite"
 );
 
-$app = new \Phalcon\Mvc\Micro();
+$app = new Phalcon\Mvc\Micro();
 $db = new Phalcon\Db\Adapter\Pdo\Sqlite($config);
 $request = new Phalcon\Http\Request();
 $response = new Phalcon\Http\Response();
@@ -34,30 +34,6 @@ $app->before(function() use ($app, $db, $request, $response)
     {
         utils::send401($response);
     }
-});
-
-$app->notFound(function() use ($response, $app){
-  utils::send404($response);
-});
-
-$app->put('/v1/api/update-key/{key}', function($key) use ($app, $response, $db)
-{
-    if(strlen($key) != 64)
-    {
-        utils::send400($response);
-    }
-    else
-    {
-        $db->update("api", array("key"), array($key));
-        $response->setJsonContent(array(
-            'state' => 'ok',
-            'code' => 200,
-            'timestamp' => time(),
-            'message' => 'The API key was successfully updated.',
-            'data' => $key,
-        ));
-    }
-    return $response;
 });
 
 $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = null) use ($app, $response, $shell)
@@ -154,10 +130,36 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
                 utils::send400($response);
             }
         break;
+
         default:
             utils::send404($response);
+        break;
     }
     return $response;
+});
+
+$app->put('/v1/api/update-key/{key}', function($key) use ($app, $response, $db)
+{
+    if(strlen($key) != 64)
+    {
+        utils::send400($response);
+    }
+    else
+    {
+        $db->update("api", array("key"), array($key));
+        $response->setJsonContent(array(
+            'state' => 'ok',
+            'code' => 200,
+            'timestamp' => time(),
+            'message' => 'The API key was successfully updated.',
+            'data' => $key,
+        ));
+    }
+    return $response;
+});
+
+$app->notFound(function() use ($response){
+    utils::send404($response);
 });
 
 $app->handle();
