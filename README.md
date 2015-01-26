@@ -18,6 +18,9 @@ This is the server counterpart to my [lg-web](http://github.com/Wintereise/lg-we
 3. traceroute
 4. traceroute6
 5. bgp
+6. stream
+
+The traceroute commands return a live stream ID which can then be used to stream their output in real time in conjunction with task 6. This makes it seem as if the user is running the command on their own system.
 
 The default API key (HTTP basic Auth - **username only**) is `odske710r3KyS8e32X5zCKnIjV82L6S4odske710r3KyS8e32X5zCUnIjV82L6S4`
 
