@@ -8,6 +8,8 @@
 
 class utils
 {
+    public static $auth = false;
+
     public static function send401 (\Phalcon\Http\Response $response)
     {
         $response->setStatusCode(401, "Unauthorized");
@@ -48,6 +50,41 @@ class utils
             ));
         if(!$response->isSent())
             $response->send();
+    }
+
+    public static function send403 (\Phalcon\Http\Response $response)
+    {
+        $response->setStatusCode(403, "Forbidden");
+        $response->setJsonContent(
+            array(
+                'state' => 'error',
+                'code' => 403,
+                'message' => 'You\'re trying to access a resource you\'re not permitted to.',
+                'data' => false,
+            ));
+        if(!$response->isSent())
+            $response->send();
+    }
+
+    public static function authCheck (Phalcon\Db\Adapter\Pdo\Sqlite $db, Phalcon\Http\Request $request, Phalcon\Http\Response $response)
+    {
+        if($request->getServer('PHP_AUTH_USER'))
+        {
+            $apiKey = $request->getServer('PHP_AUTH_USER');
+            $res = $db->fetchOne('SELECT * FROM `api` WHERE `key` = :key LIMIT 1', Phalcon\Db::FETCH_ASSOC, array('key' => $apiKey));
+            if(!$res)
+            {
+                utils::send401($response);
+            }
+            else
+            {
+                self::$auth = true;
+            }
+        }
+        else
+        {
+            utils::send401($response);
+        }
     }
 
     public static function validCIDR ($ip, $cidr)

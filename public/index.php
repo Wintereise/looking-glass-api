@@ -18,25 +18,14 @@ $db = new Phalcon\Db\Adapter\Pdo\Sqlite($config);
 $request = new Phalcon\Http\Request();
 $response = new Phalcon\Http\Response();
 $shell = new shell(false);
+$res = false;
 
-$app->before(function() use ($app, $db, $request, $response)
+$app->before(function() use ($db, $request, $response)
 {
-    if($request->getServer('PHP_AUTH_USER'))
-    {
-        $apiKey = $request->getServer('PHP_AUTH_USER');
-        $res = $db->fetchOne('SELECT * FROM `api` WHERE `key` = :key LIMIT 1', Phalcon\Db::FETCH_ASSOC, array('key' => $apiKey));
-        if(!$res)
-        {
-            utils::send401($response);
-        }
-    }
-    else
-    {
-        utils::send401($response);
-    }
+    utils::authCheck($db, $request, $response);
 });
 
-$app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = null) use ($app, $response, $shell)
+$app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = null) use ($app, $db, $response, $request, $shell)
 {
     $target = trim($target);
     switch ($task)
@@ -62,13 +51,14 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
         case 'traceroute':
             if(filter_var($target, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
             {
-                $shell->execute('traceroute -w 2', '-A', $target);
+                $uuid = uniqid();
+                $db->insert("streams", array($uuid, ip2long($target), "ipv4"), array('uuid', 'target', 'type'));
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
                     'timestamp' => time(),
-                    'message' => 'The trace was successfully performed.',
-                    'data' => $shell->getBufferedOutput(),
+                    'message' => 'The stream object has been successfully created.',
+                    'data' => $uuid,
                 ));
             }
             else
@@ -98,13 +88,14 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
         case 'traceroute6':
             if(filter_var($target, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6))
             {
-                $shell->execute('traceroute6 -w 2', '-A', $target);
+                $uuid = uniqid();
+                $db->insert("streams", array($uuid, ip2long($target), "ipv6"), array('uuid', 'target', 'type'));
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
                     'timestamp' => time(),
-                    'message' => 'The trace was successfully performed.',
-                    'data' => $shell->getBufferedOutput(),
+                    'message' => 'The stream object has been successfully created.',
+                    'data' => $uuid,
                 ));
             }
             else
@@ -138,15 +129,31 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
     return $response;
 });
 
-$app->get('/api/v1/stream/{uuid}', function($uuid) use ($app, $db)
+$app->get('/api/v1/stream/{uuid}', function($uuid) use ($app, $db, $response, $res)
 {
-    $streamer = new shell(true, function($data)
+    //needed because we're not using Phalcon\HTTP\Request() for this route
+    if (utils::$auth)
     {
-        echo $data;
-    });
-    $ip = '8.8.8.8';
-    $streamer->execute('traceroute -2', null, $ip);
+        $data = $db->fetchOne("SELECT * FROM `streams` WHERE `uuid` = :uuid LIMIT 1", Phalcon\Db::FETCH_ASSOC, array('uuid' => $uuid));
+        if (!$data)
+            utils::send403($response);
+        else {
+            $ip = long2ip($data['target']);
+            $type = $data['type'];
+            $init = new shell(true);
+            switch ($type) {
+                case 'ipv4':
+                    $init->execute('traceroute -w 1', '-A', $ip);
+                    break;
+                case 'ipv6':
+                    $init->execute('traceroute6 -w 1', '-A', $ip);
+                    break;
+            }
+            $db->execute("DELETE FROM `streams` WHERE `uuid` = ?", array($uuid));
+        }
+    }
 });
+
 
 $app->put('/api/v1/update-key/{key}', function($key) use ($app, $response, $db)
 {
@@ -173,4 +180,8 @@ $app->notFound(function() use ($response)
     utils::send404($response);
 });
 
+function parse($data)
+{
+    echo $data;
+}
 $app->handle();
