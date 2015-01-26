@@ -32,7 +32,7 @@ This is doable like [this](https://gist.github.com/Wintereise/cdc9e2d7e12f7809ad
 
 A typical response looks like this,
 
-`{"state":"ok","code":200,"message":"The trace was successfully performed.","data":"traceroute to 8.8.8.8 (8.8.8.8), 30 hops max, 60 byte packets\n1  75-97-248-162-static.reverse.queryfoundry.net (162.248.97.75)  0.080 ms  0.015 ms  0.010 ms\n2  * * *\n3  any2ix.coresite.com (206.72.210.41)  0.606 ms  0.579 ms  0.614 ms\n4  209.85.241.83 (209.85.241.83)  0.720 ms 209.85.248.59 (209.85.248.59)  0.754 ms 209.85.250.97 (209.85.250.97)  0.729 ms\n5  google-public-dns-a.google.com (8.8.8.8)  0.380 ms  0.462 ms  0.456 ms"}`
+`{"state":"ok","code":200,"timestamp":1422285039,"message":"The stream object has been successfully created.","data":"54c658ef5ed8d"}`
 
 Tools it's meant to be used with,
 
