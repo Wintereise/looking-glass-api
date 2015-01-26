@@ -62,7 +62,7 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
         case 'traceroute':
             if(filter_var($target, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
             {
-                $shell->execute('traceroute', '-w 2 -A', $target);
+                $shell->execute('traceroute -w 2', '-A', $target);
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
@@ -98,7 +98,7 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
         case 'traceroute6':
             if(filter_var($target, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6))
             {
-                $shell->execute('traceroute6', '-w 2 -A', $target);
+                $shell->execute('traceroute6 -w 2', '-A', $target);
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
@@ -136,6 +136,16 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
         break;
     }
     return $response;
+});
+
+$app->get('/api/v1/stream/{uuid}', function($uuid) use ($app, $db)
+{
+    $streamer = new shell(true, function($data)
+    {
+        echo $data;
+    });
+    $ip = '8.8.8.8';
+    $streamer->execute('traceroute -2', null, $ip);
 });
 
 $app->put('/api/v1/update-key/{key}', function($key) use ($app, $response, $db)

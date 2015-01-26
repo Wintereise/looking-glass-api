@@ -11,7 +11,7 @@ class shell
     private $stream = false;
     private $closure;
 
-    public function __construct ($enableStreaming = false, $closure = false)
+    public function __construct ($enableStreaming = false, $closure = null)
     {
         if($enableStreaming == true)
         {
