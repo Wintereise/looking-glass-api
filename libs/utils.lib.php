@@ -50,6 +50,20 @@ class utils
             $response->send();
     }
 
+    public static function send403 (\Phalcon\Http\Response $response)
+    {
+        $response->setStatusCode(403, "Forbidden");
+        $response->setJsonContent(
+            array(
+                'state' => 'error',
+                'code' => 403,
+                'message' => 'You\'re trying to access a resource you\'re not permitted to.',
+                'data' => false,
+            ));
+        if(!$response->isSent())
+            $response->send();
+    }
+
     public static function validCIDR ($ip, $cidr)
     {
         if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))

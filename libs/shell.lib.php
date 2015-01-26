@@ -9,7 +9,7 @@ class shell
 {
     private $output = "";
     private $stream = false;
-    private $closure;
+    private $closure = null;
 
     public function __construct ($enableStreaming = false, $closure = null)
     {
@@ -37,7 +37,9 @@ class shell
 
     public function handleOutput ($data)
     {
-        return call_user_func($this->closure, $data);
+        if($this->closure)
+            return call_user_func($this->closure, $data);
+        else echo($data);
     }
 
     public function execute ($cmd, $args, $host, $failCount = 3)
