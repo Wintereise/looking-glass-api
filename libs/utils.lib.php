@@ -32,9 +32,8 @@ class utils
         $response->send();
     }
 
-    public static function validCIDR ($cidr)
+    public static function validCIDR ($ip, $cidr)
     {
-        list($ip, $mask) = explode('/', $cidr);
         if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
         {
             if((int) $cidr > 0 && (int) $cidr <= 32)

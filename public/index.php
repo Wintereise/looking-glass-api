@@ -7,7 +7,7 @@
  */
 
 require_once('../libs/shell.lib.php');
-require_once('../libs/util.lib.php');
+require_once('../libs/utils.lib.php');
 
 $config = array(
     "dbname" => "../db/db.sqlite"
@@ -36,7 +36,7 @@ $app->before(function() use ($app, $db, $request, $response)
     }
 });
 
-$app->get('/v1/api/{task}/{target}', function($task, $target) use ($app, $response, $shell)
+$app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = null) use ($app, $response, $shell)
 {
     $target = trim($target);
     switch ($task)
@@ -44,7 +44,7 @@ $app->get('/v1/api/{task}/{target}', function($task, $target) use ($app, $respon
         case 'ping':
             if(filter_var($target, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
             {
-                $shell->execute('ping', '-c 2', $target);
+                $shell->execute('ping', '-c 3', $target);
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
@@ -78,7 +78,7 @@ $app->get('/v1/api/{task}/{target}', function($task, $target) use ($app, $respon
         case 'ping6':
             if(filter_var($target, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6))
             {
-                $shell->execute('ping6', '-c 2', $target);
+                $shell->execute('ping6', '-c 3', $target);
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
@@ -110,7 +110,7 @@ $app->get('/v1/api/{task}/{target}', function($task, $target) use ($app, $respon
         break;
 
         case 'bgp':
-            if(utils::validCIDR($target))
+            if(utils::validCIDR($target, $mask))
             {
                 $shell->execute('bgpctl', 'show ip bgp', $target);
                 $response->setJsonContent(array(
