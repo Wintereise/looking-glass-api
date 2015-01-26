@@ -9,7 +9,7 @@ This is the server counterpart to my [lg-web](http://github.com/Wintereise/lg-we
 
 #### Methods available
 
-*via HTTP GET* -> /v1/api/{task}/{target}[/]?{mask}
+*via HTTP GET* -> /api/v1/{task}/{target}[/]?{mask}
 
 *mask* is optional, and only useful for OpenBGPd BGP table lookups. *task* may be any of the following,
 
@@ -21,7 +21,7 @@ This is the server counterpart to my [lg-web](http://github.com/Wintereise/lg-we
 
 The default API key (HTTP basic Auth - **username only**) is `odske710r3KyS8e32X5zCKnIjV82L6S4odske710r3KyS8e32X5zCUnIjV82L6S4`
 
-*via HTTP PUT* -> /v1/api/update-key/{key}
+*via HTTP PUT* -> /api/v1/update-key/{key}
 
 Here, *key* is the new API key for the instance. It's recommended to update the key immediately after install. Note that it has to be exactly **64 characters long**.
 

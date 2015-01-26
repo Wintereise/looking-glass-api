@@ -17,7 +17,7 @@ $app = new Phalcon\Mvc\Micro();
 $db = new Phalcon\Db\Adapter\Pdo\Sqlite($config);
 $request = new Phalcon\Http\Request();
 $response = new Phalcon\Http\Response();
-$shell = new shell(false, $f = 'parse');
+$shell = new shell(false);
 
 $app->before(function() use ($app, $db, $request, $response)
 {
@@ -36,7 +36,7 @@ $app->before(function() use ($app, $db, $request, $response)
     }
 });
 
-$app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = null) use ($app, $response, $shell)
+$app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = null) use ($app, $response, $shell)
 {
     $target = trim($target);
     switch ($task)
@@ -138,7 +138,7 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
     return $response;
 });
 
-$app->put('/v1/api/update-key/{key}', function($key) use ($app, $response, $db)
+$app->put('/api/v1/update-key/{key}', function($key) use ($app, $response, $db)
 {
     if(strlen($key) != 64)
     {
@@ -158,7 +158,8 @@ $app->put('/v1/api/update-key/{key}', function($key) use ($app, $response, $db)
     return $response;
 });
 
-$app->notFound(function() use ($response){
+$app->notFound(function() use ($response)
+{
     utils::send404($response);
 });
 

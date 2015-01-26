@@ -18,7 +18,8 @@ class utils
                 'message' => 'Your request is missing the API credentials required to authenticate you, or you provided invalid credentials.',
                 'data' => false,
             ));
-        $response->send();
+        if(!$response->isSent())
+            $response->send();
     }
 
     public static function send400 (\Phalcon\Http\Response $response)
@@ -31,7 +32,8 @@ class utils
                 'message' => 'Your request contains malformed parameters.',
                 'data' => false,
             ));
-        $response->send();
+        if(!$response->isSent())
+            $response->send();
     }
 
     public static function send404 (\Phalcon\Http\Response $response)
@@ -44,7 +46,8 @@ class utils
                 'message' => 'Your\'re looking for something that isn\'t here.',
                 'data' => false,
             ));
-        $response->send();
+        if(!$response->isSent())
+            $response->send();
     }
 
     public static function validCIDR ($ip, $cidr)
