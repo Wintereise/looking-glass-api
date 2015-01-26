@@ -10,6 +10,7 @@ class utils
 {
     public static function send401 (\Phalcon\Http\Response $response)
     {
+        $response->setStatusCode(401, "Unauthorized");
         $response->setJsonContent(
             array(
                 'state' => 'error',
@@ -22,6 +23,7 @@ class utils
 
     public static function send400 (\Phalcon\Http\Response $response)
     {
+        $response->setStatusCode(400, "Malformed request");
         $response->setJsonContent(
             array(
                 'state' => 'error',

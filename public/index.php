@@ -36,6 +36,26 @@ $app->before(function() use ($app, $db, $request, $response)
     }
 });
 
+$app->put('/v1/api/update-key/{key}', function($key) use ($app, $response, $db)
+{
+    if(strlen($key) != 64)
+    {
+        utils::send400($response);
+    }
+    else
+    {
+        $db->update("api", array("key"), array($key));
+        $response->setJsonContent(array(
+            'state' => 'ok',
+            'code' => 200,
+            'timestamp' => time(),
+            'message' => 'The API key was successfully updated.',
+            'data' => $key,
+        ));
+    }
+    return $response;
+});
+
 $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = null) use ($app, $response, $shell)
 {
     $target = trim($target);
@@ -48,6 +68,7 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
+                    'timestamp' => time(),
                     'message' => 'The ping was successfully performed.',
                     'data' => $shell->getBufferedOutput(),
                 ));
@@ -65,6 +86,7 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
+                    'timestamp' => time(),
                     'message' => 'The trace was successfully performed.',
                     'data' => $shell->getBufferedOutput(),
                 ));
@@ -82,6 +104,7 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
+                    'timestamp' => time(),
                     'message' => 'The ping was successfully performed.',
                     'data' => $shell->getBufferedOutput(),
                 ));
@@ -99,6 +122,7 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
+                    'timestamp' => time(),
                     'message' => 'The trace was successfully performed.',
                     'data' => $shell->getBufferedOutput(),
                 ));
@@ -116,6 +140,7 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
+                    'timestamp' => time(),
                     'message' => 'The BGP table lookup was successfully performed.',
                     'data' => $shell->getBufferedOutput(),
                 ));
@@ -129,10 +154,6 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
     return $response;
 });
 
+
+
 $app->handle();
-
-
-function parse ($data)
-{
-    echo $data;
-}
