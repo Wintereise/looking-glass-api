@@ -75,8 +75,12 @@ class shell
         // iterate stdout
         while (($str = fgets($pipes[1], 1024)) != null)
         {
-            $str = trim($str);
-
+            $str = htmlspecialchars(trim($str));
+            if($this->stream)
+            {
+                if(ob_get_level() == 0)
+                    ob_start();
+            }
             // correct output for traceroute
             if ($type === 'traceroute')
             {
@@ -103,10 +107,11 @@ class shell
                 $traceCount++;
             }
 
-            // pad string for live output
             if($this->stream == true)
             {
                 $this->handleOutput(sprintf("%s\n", $str));
+                @ob_flush();
+                flush();
             }
             else
             {

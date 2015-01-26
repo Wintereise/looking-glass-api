@@ -140,12 +140,10 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
 
 $app->get('/api/v1/stream/{uuid}', function($uuid) use ($app, $db)
 {
-    $streamer = new shell(true, function($data)
-    {
-        echo $data;
-    });
+    $streamer = new shell(true, $f = 'parse');
     $ip = '8.8.8.8';
-    $streamer->execute('traceroute -2', null, $ip);
+    $streamer->execute('traceroute', '', $ip);
+    echo $streamer->getBufferedOutput();
 });
 
 $app->put('/api/v1/update-key/{key}', function($key) use ($app, $response, $db)
@@ -173,4 +171,8 @@ $app->notFound(function() use ($response)
     utils::send404($response);
 });
 
+function parse($data)
+{
+    echo $data;
+}
 $app->handle();
