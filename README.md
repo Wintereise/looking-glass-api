@@ -27,13 +27,13 @@ Here, *key* is the new API key for the instance. It's recommended to update the 
 
 This is doable like this, or via the API -- whichever you prefer.
 
-`root@lax /var/www/lg-api # sqlite3 db/db.sqlite
+root@lax /var/www/lg-api # sqlite3 db/db.sqlite
 SQLite version 3.7.13 2012-06-11 02:05:22
 Enter ".help" for instructions
 Enter SQL statements terminated with a ";"
 sqlite> UPDATE `api` SET `key` = 'NEW_KEY_64_CHARS_GOES_HERE';
 sqlite> .exit
-`
+
 
 A typical response looks like this,
 
