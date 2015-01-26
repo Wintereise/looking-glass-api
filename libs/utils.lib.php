@@ -34,6 +34,19 @@ class utils
         $response->send();
     }
 
+    public static function send404 (\Phalcon\Http\Response $response)
+    {
+        $response->setStatusCode(404, "Not found");
+        $response->setJsonContent(
+            array(
+                'state' => 'error',
+                'code' => 404,
+                'message' => 'Your\'re looking for something that isn\'t here.',
+                'data' => false,
+            ));
+        $response->send();
+    }
+
     public static function validCIDR ($ip, $cidr)
     {
         if(filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))

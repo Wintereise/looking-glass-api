@@ -13,11 +13,11 @@ This is the server counterpart to my [lg-web](http://github.com/Wintereise/lg-we
 4. traceroute6
 5. bgp
 
-The default API key (HTTP basic Auth - *username only*) is odske710r3KyS8e32X5zCKnIjV82L6S4odske710r3KyS8e32X5zCUnIjV82L6S4
+The default API key (HTTP basic Auth - **username only**) is `odske710r3KyS8e32X5zCKnIjV82L6S4odske710r3KyS8e32X5zCUnIjV82L6S4`
 
 *via HTTP PUT* -> /v1/api/update-key/{key}
 
-Here, *key* is the new API key for the instance. It's recommended to update the key immediately after install.
+Here, *key* is the new API key for the instance. It's recommended to update the key immediately after install. Note that it has to be exactly **64 characters long**.
 
 A typical response looks like this,
 

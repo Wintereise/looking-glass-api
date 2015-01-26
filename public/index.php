@@ -36,6 +36,10 @@ $app->before(function() use ($app, $db, $request, $response)
     }
 });
 
+$app->notFound(function() use ($response, $app){
+  utils::send404($response);
+});
+
 $app->put('/v1/api/update-key/{key}', function($key) use ($app, $response, $db)
 {
     if(strlen($key) != 64)
@@ -136,7 +140,7 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
         case 'bgp':
             if(utils::validCIDR($target, $mask))
             {
-                $shell->execute('bgpctl', 'show ip bgp', $target);
+                $shell->execute('bgpctl', 'show ip bgp', sprintf("%s/%s", $target, $mask));
                 $response->setJsonContent(array(
                     'state' => 'ok',
                     'code' => 200,
@@ -150,10 +154,10 @@ $app->get('/v1/api/{task}/{target}[/]?{mask}', function($task, $target, $mask = 
                 utils::send400($response);
             }
         break;
+        default:
+            utils::send404($response);
     }
     return $response;
 });
-
-
 
 $app->handle();
