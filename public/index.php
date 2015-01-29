@@ -136,7 +136,7 @@ $app->get('/api/v1/stream/{uuid}', function($uuid) use ($app, $db, $response, $r
     {
         $data = $db->fetchOne("SELECT * FROM `streams` WHERE `uuid` = :uuid LIMIT 1", Phalcon\Db::FETCH_ASSOC, array('uuid' => $uuid));
         if (!$data)
-            utils::send403($response);
+            utils::send404($response);
         else {
             $ip = long2ip($data['target']);
             $type = $data['type'];

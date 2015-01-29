@@ -74,7 +74,7 @@ class utils
             $res = $db->fetchOne('SELECT * FROM `api` WHERE `key` = :key LIMIT 1', Phalcon\Db::FETCH_ASSOC, array('key' => $apiKey));
             if(!$res)
             {
-                utils::send401($response);
+                self::send401($response);
             }
             else
             {
@@ -83,7 +83,7 @@ class utils
         }
         else
         {
-            utils::send401($response);
+            self::send401($response);
         }
     }
 
