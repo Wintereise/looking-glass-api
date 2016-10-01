@@ -20,8 +20,7 @@ class utils
                 'message' => 'Your request is missing the API credentials required to authenticate you, or you provided invalid credentials.',
                 'data' => false,
             ));
-        if(!$response->isSent())
-            $response->send();
+        self::sendIfNotSent($response);
     }
 
     public static function send400 (\Phalcon\Http\Response $response)
@@ -34,8 +33,7 @@ class utils
                 'message' => 'Your request contains malformed parameters.',
                 'data' => false,
             ));
-        if(!$response->isSent())
-            $response->send();
+        self::sendIfNotSent($response);
     }
 
     public static function send404 (\Phalcon\Http\Response $response)
@@ -48,8 +46,7 @@ class utils
                 'message' => 'Your\'re looking for something that isn\'t here.',
                 'data' => false,
             ));
-        if(!$response->isSent())
-            $response->send();
+        self::sendIfNotSent($response);
     }
 
     public static function send403 (\Phalcon\Http\Response $response)
@@ -62,8 +59,7 @@ class utils
                 'message' => 'You\'re trying to access a resource you\'re not permitted to.',
                 'data' => false,
             ));
-        if(!$response->isSent())
-            $response->send();
+        self::sendIfNotSent($response);
     }
 
     public static function authCheck (Phalcon\Db\Adapter\Pdo\Sqlite $db, Phalcon\Http\Request $request, Phalcon\Http\Response $response)
@@ -99,7 +95,16 @@ class utils
             if((int) $cidr > 0 && (int) $cidr <= 128)
                 return true;
         }
-        else
-            return false;
+        return false;
+    }
+
+    public static function uuid ($length = 24)
+    {
+        return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTWRXYZ"), 0, $length);
+    }
+
+    public static function sendIfNotSent (\Phalcon\Http\Response $response)
+    {
+        $response->isSent() ? : $response->send();
     }
 }

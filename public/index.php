@@ -96,7 +96,8 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function ($task, $target, $mask =
                     'message'   => 'The stream object has been successfully created.',
                     'data'      => $uuid,
                 ));
-            } else
+            }
+            else
             {
                 utils::send400($response);
             }
@@ -105,7 +106,7 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function ($task, $target, $mask =
         case 'bgp':
             if (utils::validCIDR($target, $mask))
             {
-                $shell->execute('bgpctl', 'show ip bgp', sprintf("%s/%s", $target, $mask));
+                $shell->execute('rlookup', '', sprintf("%s/%s", $target, $mask));
                 $response->setJsonContent(array(
                     'state'     => 'ok',
                     'code'      => 200,
@@ -113,7 +114,8 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function ($task, $target, $mask =
                     'message'   => 'The BGP table lookup was successfully performed.',
                     'data'      => $shell->getBufferedOutput(),
                 ));
-            } else
+            }
+            else
             {
                 utils::send400($response);
             }
