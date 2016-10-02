@@ -88,7 +88,7 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function ($task, $target, $mask =
             if (filter_var($target, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6))
             {
                 $uuid = utils::uuid();
-                $db->insert("streams", array($uuid, ip2long($target), "ipv6"), array('uuid', 'target', 'type'));
+                $db->insert("streams", array($uuid, utils::ipv62Long($target), "ipv6"), array('uuid', 'target', 'type'));
                 $response->setJsonContent(array(
                     'state'     => 'ok',
                     'code'      => 200,
@@ -138,15 +138,17 @@ $app->get('/api/v1/stream/{uuid}', function ($uuid) use ($app, $db, $response, $
             utils::send404($response);
         else
         {
-            $ip = long2ip($data['target']);
+
             $type = $data['type'];
             $init = new shell(true);
             switch ($type)
             {
                 case 'ipv4':
+                    $ip = long2ip($data['target']);
                     $init->execute('traceroute -w 1', '-A', $ip);
                     break;
                 case 'ipv6':
+                    $ip = utils::long2Ipv6($data['target']);
                     $init->execute('traceroute6 -w 1', '-A', $ip);
                     break;
             }

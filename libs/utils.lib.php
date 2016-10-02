@@ -107,4 +107,15 @@ class utils
     {
         $response->isSent() ? : $response->send();
     }
+
+    public static function ipv62Long ($ip)
+    {
+        return (string) gmp_import(inet_pton($ip));
+    }
+
+    public  static function long2Ipv6 ($integer)
+    {
+        return inet_ntop(str_pad(gmp_export($integer), 16, "\0", STR_PAD_LEFT));
+
+    }
 }
