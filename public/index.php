@@ -130,30 +130,27 @@ $app->get('/api/v1/{task}/{target}[/]?{mask}', function ($task, $target, $mask =
 
 $app->get('/api/v1/stream/{uuid}', function ($uuid) use ($app, $db, $response, $res)
 {
-    //needed because we're not using Phalcon\HTTP\Request() for this route
-    if (utils::$auth)
+    //auth requirement to stream makes no sense
+    $data = $db->fetchOne("SELECT * FROM `streams` WHERE `uuid` = :uuid LIMIT 1", Phalcon\Db::FETCH_ASSOC, array('uuid' => $uuid));
+    if (!$data)
+        utils::send404($response);
+    else
     {
-        $data = $db->fetchOne("SELECT * FROM `streams` WHERE `uuid` = :uuid LIMIT 1", Phalcon\Db::FETCH_ASSOC, array('uuid' => $uuid));
-        if (!$data)
-            utils::send404($response);
-        else
-        {
 
-            $type = $data['type'];
-            $init = new shell(true);
-            switch ($type)
-            {
-                case 'ipv4':
-                    $ip = long2ip($data['target']);
-                    $init->execute('traceroute -w 1', '-A', $ip);
-                    break;
-                case 'ipv6':
-                    $ip = utils::long2Ipv6($data['target']);
-                    $init->execute('traceroute6 -w 1', '-A', $ip);
-                    break;
-            }
-            $db->execute("DELETE FROM `streams` WHERE `uuid` = ?", array($uuid));
+        $type = $data['type'];
+        $init = new shell(true);
+        switch ($type)
+        {
+            case 'ipv4':
+                $ip = long2ip($data['target']);
+                $init->execute('traceroute -w 1', '-A', $ip);
+                break;
+            case 'ipv6':
+                $ip = utils::long2Ipv6($data['target']);
+                $init->execute('traceroute6 -w 1', '-A', $ip);
+                break;
         }
+        $db->execute("DELETE FROM `streams` WHERE `uuid` = ?", array($uuid));
     }
 });
 
